@@ -5,15 +5,6 @@ import numpy as np
 import matplotlib as mpl
 import vrfCurrScan
 
-#with open('driveDampCavity01_wError.dat','r') as f:
-#    fittxt = f.readline()
-#ddampfit = np.array(fittxt[fittxt.find('=')+1:].strip('\n').split(','),float)
-#ddampfit[1] = 
-#potmid = ddampfit[2]
-#freqgrad = 99.931e6/3688.*ddampfit[3]/2.
-#freqgrad = 0.1862*1e6
-#pot2freq = lambda x: freqgrad*(x-potmid)
-
 def grateImage(gres,hcflat,inst):
     """
     Plot function not included in manuscript
@@ -185,215 +176,7 @@ def plotThresholds(dirname,ax=None):
     ax.set_xlim(0,290)
     ax.set_ylim(0,700)
     ax.set_yticks(np.arange(0,610,200))
-
-def prepVrfIthPlot(dirname,lb=None,rs=8.25e6,**kwargs):
-    """
-    For figure6: prepVrfIthPlot('COSMOS_results/RFVoltageThreeCavities/noparking_fine')
-    For figure10: prepVrfIthPlot('COSMOS_results/noparking_4main_2landaus_currzoom/',rs=5.5e6)
-    """
-
-    dirs = utility.getOutput('ls '+dirname).split('\n')[:-1]
-    dets = []
-    res = []
-    reswr = []
-    for d in dirs:
-        print d
-        bae = vrfCurrScan.loadCOSMOSDataAsInst(dirname+'/'+d+'/')
-        hcf = vrfCurrScan.flatPotential(bae,(rs,20800))
-        #hcf = bae.hcfield[:,7]
-        hcf[np.isnan(hcf)] = np.mean(hcf[~np.isnan(hcf)])
-        if np.all(lb==None):
-            ith, omegar, b_trash = vrfCurrScan.getLindbergThreshold2(bae,hcf,controlplot=False,startind=0,use_vlasov=True,interp=False,**kwargs)
-        else:
-            ith, omegar = vrfCurrScan.getLindbergThreshold2(bae,hcf,controlplot=False,startind=0,use_vlasov=True,lb=lb,**kwargs)
-        dets.append(float(d[3:-2]))
-        res.append(ith)
-        reswr.append(omegar)
-
-        del(bae)
-
-    resarray = np.array(zip(dets,res,reswr),dtype=[('dets',float),('iths',float),('omegar',float)])
-    resarray = np.sort(resarray,order=['dets'])
-        
-    return resarray
-
-def getBunchLengths(dirname,vrf,rs=8.25e6):
-    dirname += '/Vrf'+str(vrf)+'kV/'
-    bae = vrfCurrScan.loadCOSMOSDataAsInst(dirname)
-    hcf = vrfCurrScan.flatPotential(bae,(rs,20800))
-    hcf[np.isnan(hcf)] = np.mean(hcf[~np.isnan(hcf)])
-    #detinds = np.argmin(np.absollute(bae.hcfield.T-hcf),axis=0)
-    #detindm1 = detinds+(-1)**(bae.hcfields[np.arange(len(detinds)),detinds]-hcf>0)
-    blens = np.zeros(len(bae.hcfield))
-    for i,(bl,hc,hf) in enumerate(zip(bae.blenbar,bae.hcfield,hcf)):
-        blens[i] = np.interp(hf,hc,bl)
-    revangfreq = 2*np.pi*vrfCurrScan.sd.frf/vrfCurrScan.sd.nbunch
-    qso = np.sqrt(vrfCurrScan.sd.nbunch*vrfCurrScan.sd.alphac/2./np.pi/vrfCurrScan.sd.energy*bae.vrf[0]*np.sqrt(1-vrfCurrScan.sd.eloss**2/bae.vrf[0]**2))
-    blen0 = vrfCurrScan.sd.alphac*vrfCurrScan.sd.espread/qso/revangfreq
-    return hcf, blens, blen0
-
-def figure6VrfIthVsExperiment(resarray,includeTiHe=False):
-    """
-    Takes single input, the output of prepVrfIthPlot
-    """
-
-    f = figure()
-    ax = f.add_subplot(111)
-
-    a = np.loadtxt('flatThresh_exp.dat',delimiter=',')
-
-    ax.errorbar(a[:,0],a[:,1],ms=8,mew=1,capsize=5,yerr=5,label='Data',ls='none')
-
-    xaxe = [800,1050]
-    #filt = resarray['dets']>820
-    filt = np.ones(len(resarray['dets']),bool)
-    filt &= resarray['dets']<=1050
-    #filt &= (resarray['iths']>np.percentile(resarray['iths'],2)) & (resarray['iths']<np.percentile(resarray['iths'],98))
-    niter = 0
-    print '%d of %d points remaining' % (np.sum(filt),len(filt))    
-    for n in range(niter):
-        pfit = np.polyfit(resarray['iths'][filt]*1e3,resarray['dets'][filt],1)
-        ydiff = resarray['dets']-np.polyval(pfit,resarray['iths']*1e3)
-        filt &= np.absolute(ydiff)<np.percentile(np.absolute(ydiff),83)
-        print '%d of %d points remaining' % (np.sum(filt),len(filt))
-    #filt = np.ones(len(resarray['dets']),bool)
-
-    print resarray['dets'][~filt]
-    pfit = np.polyfit(resarray['dets'][filt],resarray['iths'][filt]*1e3,1)
-    ax.plot(resarray['iths'][filt]*1e3,resarray['dets'][filt],'.',mew=2,alpha=0.5,label='Theory')
-    #ax.plot(resarray['iths'][~filt]*1e3,resarray['dets'][~filt],'.',mew=2)
-    ax.plot(np.polyval(pfit,xaxe),xaxe,'-',label='Linear fit')
-
-    hl,lb = ax.get_legend_handles_labels()
-    ax.legend(hl[2:]+hl[:2],('Data (mode -1)','Theory (mode +1)','Linear fit'))
-    #ax.legend()
-
-    #ax.set_ylim(860,1100)
-    #ax.set_xlim(280,350)
-    ax.set_xticks(np.arange(280,350,20))
-    ax.set_ylim(0,1075)
     
-    ax.set_xlabel('Beam current (mA)')
-    ax.set_ylabel('Threshold RF voltage (kV)')
-
-def figure6IthVsVrfExperiment(resarray,includeTiHe=False):
-    """
-    Takes single input, the output of prepVrfIthPlot
-    """
-
-    f = figure()
-    ax = f.add_subplot(111)
-
-    a = np.loadtxt('flatThresh_exp.dat',delimiter=',')
-
-    if includeTiHe:
-        tihedat = np.loadtxt('noLandauTheoryIths_twoLandaus.txt')
-        filt = ithedat[:,1]!=0
-        pfitth = np.polyfit(tihedat[filt,0],tihedat[filt,1],1)
-
-    ax.errorbar(a[:,1],a[:,0],ms=6,mew=1,capsize=3,xerr=2.5,yerr=5,label='Data',ls='none')
-
-    xaxe = [800,1050]
-    #filt = resarray['dets']>820
-    filt = np.ones(len(resarray['dets']),bool)
-    filt &= resarray['dets']<=1050
-    #filt &= (resarray['iths']>np.percentile(resarray['iths'],2)) & (resarray['iths']<np.percentile(resarray['iths'],98))
-    niter = 0
-    print '%d of %d points remaining' % (np.sum(filt),len(filt))    
-    for n in range(niter):
-        pfit = np.polyfit(resarray['iths'][filt]*1e3,resarray['dets'][filt],1)
-        ydiff = resarray['dets']-np.polyval(pfit,resarray['iths']*1e3)
-        filt &= np.absolute(ydiff)<np.percentile(np.absolute(ydiff),83)
-        print '%d of %d points remaining' % (np.sum(filt),len(filt))
-    #filt = np.ones(len(resarray['dets']),bool)
-
-    print resarray['dets'][~filt]
-    pfit = np.polyfit(resarray['dets'][filt],resarray['iths'][filt]*1e3,1)
-    ax.plot(resarray['dets'][filt],resarray['iths'][filt]*1e3,'.',mew=2,alpha=0.5,label='Theory')
-    #ax.plot(resarray['iths'][~filt]*1e3,resarray['dets'][~filt],'.',mew=2)
-    if includeTiHe:
-        ax.plot(xaxe,np.polyval(pfitth,xaxe),'-',label='Tianlong He\nprediction')
-        ax.plot(xaxe,np.polyval(pfit,xaxe),'-',label='Krinsky theory')
-    else:
-        ax.plot(xaxe,np.polyval(pfit,xaxe),'-',label='Linear fit')
-        
-    hl,lb = ax.get_legend_handles_labels()
-    ax.legend(hl[2:]+hl[:2],('Data (mode -1)','Theory (mode +1)','Linear fit'))
-    #ax.legend()
-
-    #ax.set_ylim(860,1100)
-    #ax.set_xlim(280,350)
-    #ax.set_xticks(np.arange(280,350,20))
-    ax.set_ylim(0,360)
-    ax.set_xlim(875,1050)
-    ax.set_xticks(np.arange(900,1075,50))
-    
-    ax.set_ylabel('Beam current (mA)')
-    ax.set_xlabel('Threshold RF voltage (kV)')
-    
-def figure10IthVsVrfExperiment(resarray,includeTiHe=False):
-    """
-    Takes single input, the output of prepVrfIthPlot
-    """
-
-    f = figure()
-    ax = f.add_subplot(111)
-
-    a = np.loadtxt('flatThresh_exp_2landaus.dat')
-
-    if includeTiHe:
-        tihedat = np.loadtxt('noLandauTheoryIths_twoLandaus.txt')
-        filt = tihedat[:,1]!=0
-        pfitth = np.polyfit(tihedat[filt,0],tihedat[filt,1],1)    
-
-    ax.errorbar(a[:,1],a[:,0],mew=1,capsize=3,xerr=2.5,yerr=5,label='Data',ls='none')
-
-    xaxe = [800,1200]
-    pfit = np.polyfit(resarray['dets'],resarray['iths']*1e3,1)
-    ax.plot(resarray['dets'],resarray['iths']*1e3,'.',mew=2,alpha=0.5,label='Theory')
-    #ax.plot(resarray['iths'][~filt]*1e3,resarray['dets'][~filt],'.',mew=2)
-    ax.plot(xaxe,np.polyval(pfit,xaxe),'-',label='Linear fit')
-    if includeTiHe:
-        ax.plot(xaxe,np.polyval(pfitth,xaxe)*1e3,'-',label='Tianlong He prediction')
-    
-    hl,lb = ax.get_legend_handles_labels()
-    if includeTiHe:
-        ax.legend(hl[3:]+hl[:3],('Data','Krinsky theory','Linear fit','Tianlong He prediction'),loc=2,bbox_to_anchor=(0,0.6))
-    else:
-        ax.legend(hl[2:]+hl[:2],('Data','Theory','Linear fit'))
-    #ax.legend()
-
-    ax.set_xlim(900,1100)
-    ax.set_ylim(0,560)
-    
-    ax.set_ylabel('Threshold current (mA)')
-    ax.set_xlabel('RF voltage (kV)')
-    
-def prepParkedMainPlot(dirnames=['COSMOS_results/parkedmain_4main_2Landaus','COSMOS_results/parkedmain_4main_2landaus_fine'],lb=None):
-    """
-    """
-
-    dets = []
-    res = []    
-    for dirname in dirnames:
-        dirs=utility.getOutput('ls '+dirname).split('\n')[:-1]
-        for d in dirs:
-            print d
-            bae = vrfCurrScan.loadCOSMOSDataAsInst(dirname+'/'+d+'/')
-            hcf = vrfCurrScan.flatPotential(bae,(5.5e6,20800))
-            hcf[np.isnan(hcf)] = np.mean(hcf[~np.isnan(hcf)])
-            if np.all(lb==None):
-                ith, lb = vrfCurrScan.getLindbergThreshold2(bae,hcf,controlplot=False,startind=0,twoCross=True,use_vlasov=True)
-            else:
-                ith = vrfCurrScan.getLindbergThreshold2(bae,hcf,controlplot=False,startind=0,twoCross=True,lb=lb,use_vlasov=True)
-            dets.append(float(d[6:].replace('k','000')))
-            res.append(ith)
-
-    resarray = np.array(zip(dets,res),dtype=[('dets',float),('iths',float)])
-    resarray = np.sort(resarray,order=['dets'])
-        
-    return resarray
-
 def prepFigure1TheoryCurves():
     """
     Prepare results for Figure 1 - the predictions of theories that neglect Landau damping
@@ -437,11 +220,17 @@ def figure1TheoryCurves(binst,hcfflat):
     ax.legend(ax.lines[:2]+ax2.lines,('Cullinan et al., 2020','Venturini approximation','Tianlong He prediction'),loc=3)
 
 def prepImpedanceFigure(parked_main=True):
+    """
+    Prepare impedance figures
+    """
     bainst = vrfCurrScan.boschAnalysisVrf(1e6,True,current=np.array([0.2]),zerofreq=True,deltinsts=True,omegasapprox=True,parked_main=99.931e6*(1-1/176.)+50e3)        
     tst = vrfCurrScan.fullImpedance(bainst,0,18)
     return tst
 
 def prepImpedanceFigureDebugTest(parked_main=True):
+    """
+    Called by test.py in order to test the functions within the repository
+    """
     bainst = vrfCurrScan.boschAnalysisVrf(1e6,True,current=np.array([0.2]),detune=np.array([200]),forceflat=True,zerofreq=True,deltinsts=True,omegasapprox=True,parked_main=99.931e6*(1-1/176.)+50e3)
     tst = vrfCurrScan.fullImpedance(bainst,0,0)
     return tst
@@ -457,9 +246,15 @@ def prepLindbergPlots():
     return bae, hcf
 
 def figure2LContour(bae,hcf):
+    """
+    Plot the Landau contours and growth rates of mode 1
+    """
     vrfCurrScan.getLindbergThreshold2(bae,hcf,controlplot=2,startind=0,twoCross=False,use_vlasov=True,highlightpoint=False)
 
 def impedanceFigure(imped,real=True,parked_main=True):
+    """
+    Create a figure displaying the calculated impedance
+    """
     f = figure()
     ax = f.add_subplot(111)
     #ax2 = ax.twinx()
