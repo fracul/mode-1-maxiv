@@ -1,0 +1,12 @@
+name=maxiv
+current=0.25
+energy=3e9
+length=528
+alphac=0.000306
+frf=99.931e6
+vrf=1.251e6
+nbunch=176
+eloss=363.8e3
+espread=0.000769
+ltune=0.001638
+blen=35.672e-12

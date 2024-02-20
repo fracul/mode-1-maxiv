@@ -1,0 +1,36 @@
+This is a Git repository of the source code and configuration files used to generate the theoretical predictions in the manuscript entitled:
+
+** Experimental Observation of a Mode-1 Instability Driven by Landau Cavities in a Storage Ring**
+
+For full context, please refer to the above manuscript and references. The code is by no means packaged into a user-friendly application but users are welcome to inspect it and make use of it as they see fit. The code is designed to be used with Python 2.7 and Pylab in an IPython environment. Adaptation would be required to make use of the code in other environments. To test the functionality of the code, run the following from the command line:
+
+>python test.py
+
+If this completes successfully without raising any errors (warnings are ok) then the functionality required for reproducing the calculations in the above manuscript.
+
+Users are welcome to go through the Doc strings in all of the files (where avaulable) but are recommended to use vrfCurrScan.py as an entry point. Functions/classes that do not have doc strings can mostly be ignored. In general, the most important functions and classes can be found towards the top of the files. The paper_plots.py contains a lot of examples that are principally used to generate the plots in the above manuscript. It can be a good source of reference to see how the code is to be used.
+
+The workpath is as follows:
+
+1) scanDetune.BoschAnalysis - A class for calculating many complex coherent frequencies, beam distributions and stability predictors across a range of currents and Landau-cavity detunings.
+2) cavity_tuning (module) - This calculates cavity settings for different beam and machine parameters, principally cavity detunings and voltages (using the theory in the note of Wilson).
+3a) transients.Transient - A class for calculating longitudinal beam distributions in the presence of passively loaded and active cavities. It has the possibility to included nonuniform fill patterns.
+3b) scanDetune.brentOptimise - This makes use of the transients.Transient class but works for uniform fills only. It is much more robust for cases close to flat potential and for oversrtetched bunches.
+3c) bosch.BoschInstability - This calculates the complex coherent frequencies of the Robinson (mode-0) dipole and quadrupole modes including coupled modes.
+4a) cbm_solver.CbmTdmSolve - Takes a transients.Transient class as an input and calculates the complex coherent frequencies of coupled-bunch modes including modes 0 and 1. This class uses the method of Thompson and Ruth.
+4b) cbm_vlasov.VlasovSolve - Similar to the above class but uses the derivation from the Vlasov equation instead. For dipole instabilities, the results are very similar to the Thompson and Ruth method but the Vlasov derivation also allows for the evaluuation of quadrupolar instabilities.
+
+The scanDetune.BoschAnalysis class must be initiaised differently if Landau damping is to be included or not.
+
+To include Landau damping, the following keyword arguments to scanDetune.BoschAnalysis must be set:
+zerofreq=True
+omegasapprox=True
+This will assume an approximate incoherent synchrotron frequency to be used in the analysis. This value is then noramlised out so the final result is independent but the interpretation of complex coherent frequency shifts with and without Landau damping is included. The zerofreq argument ensures that the added incoherent synchrotron frequency is neglected to ensure that the coupling matrix is calculated as it should be. The results stored in the ruthd1 and ruthd1_v are then appropriate to be compared to the output of *lindberg.lindbergIntegral* once it is multiplied by the assumed incoherent synchrotron frequency.
+
+On the other hand, to neglext Landau damping, the following arguments are appropriate.
+zerofreq=False
+omegasapprox=False
+This will then not use the small coherent frequency shift approximation and include the incoherent frequency shift as is appropriate in this case.
+
+----------------------------------------------------------------------------------------------------------------
+2024/02 Francis Cullinan - francis.cullinan@maxiv.lu.se
