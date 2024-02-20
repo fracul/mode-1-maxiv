@@ -32,5 +32,7 @@ zerofreq=False
 omegasapprox=False
 This will then not use the small coherent frequency shift approximation and include the incoherent frequency shift as is appropriate in this case.
 
+The file unifillmode1.py is a script that was used for running the above calculations on a cluster.
+
 ----------------------------------------------------------------------------------------------------------------
 2024/02 Francis Cullinan - francis.cullinan@maxiv.lu.se
