@@ -278,7 +278,7 @@ class BoschAnalysis:
                     t.runIterations(self.titerkwargs['niterations'],blenskip=self.titerkwargs['blenskip'])
                     isn = np.isnan(t.ltune)
                     if np.any(isn) and np.sum(isn)<5 and len(t.ltune)>10:
-                        print 'Starting while loop'
+                        print('Starting while loop')
                         while np.any(isn):
                             mid = np.where(isn)[0][0]
                             st = mid-1
@@ -289,7 +289,7 @@ class BoschAnalysis:
                                 en = (en+1)%t.sring.nbunch
                             t.ltune[mid] = np.mean(t.ltune[[st,en]])
                             isn = np.isnan(t.ltune)
-                        print 'Out of while loop'                            
+                        print('Out of while loop')
 
                 if np.isnan(t.dist).all():  self.hcfield[i,j] = np.nan
                 else:  self.hcfield[i,j] = np.mean(np.absolute(t.landau_phasor[:,1]))
@@ -435,7 +435,7 @@ class BoschAnalysis:
                     tin.append(None)
                 else:
                     tin.append(t)
-                print c
+                print(c)
                 
             self.tinsts.append(tin)
             self.bmans.append(bm)
@@ -616,13 +616,13 @@ def detuneScan(*args,**kwargs):
         try:
             t.runIterations(300,blenskip=5)
         except np.linalg.linalg.LinAlgError:
-            print 'Error with detuning', d
+            print('Error with detuning', d)
         r = transient.Transient(*k,**kwargs)
         r.time_off = kick*np.sin(np.arange(args[0].nbunch)*2*np.pi/args[0].nbunch)
         try:
             r.runIterations(300,blenskip=5)
         except np.linalg.linalg.LinAlgError:
-            print 'Error with kick and detuning', d
+            print('Error with kick and detuning', d)
         if kwargs['blength']==False:
             t.bunchProfile()
             r.bunchProfile()            
@@ -666,7 +666,7 @@ def formFactContour(*args,**kwargs):
             try:
                 t.runIterations(1,fract=0)
             except np.linalg.linalg.LinAlgError:
-                print 'Failed for amplitude %.1f and phase %.1f' % (f,p)
+                print('Failed for amplitude %.1f and phase %.1f' % (f,p))
             res[i,j] = np.mean(t.formfact[:,hcind])-ff0
 
     return ffact, fphi, res
@@ -684,7 +684,7 @@ def brentOptimise(*args,**kwargs):
         kwargs.update({'active_cavs':[[],[],[]]})
         
     if len(args[2])>1:
-        print 'Multiple harmonic cavities exist, all except number %d should have shunt impedance 0.' % nind[0]
+        print('Multiple harmonic cavities exist, all except number %d should have shunt impedance 0.' % nind[0])
     nind = nind[0]
     
     def evalBrent(ffact):
@@ -777,10 +777,10 @@ def fieldModContour(*args,**kwargs):
                 try:
                     t.runIterations(1,fract=0)
                 except np.linalg.linalg.LinAlgError:
-                    print 'Failed for amplitude %.1f and phase %.1f' % (f,p)
+                    print('Failed for amplitude %.1f and phase %.1f' % (f,p))
                 res[i,j,k] = np.mean(t.formfact)-np.mean(ff0)
                 #res[i,j,k] = np.mean(t.formfact-ff0)
-                print 'Completed iteration %d of %d' % (iter_count,tot_num)
+                print('Completed iteration %d of %d' % (iter_count,tot_num))
                 iter_count += 1
 
     return famp, fbw, fphi, res
@@ -805,7 +805,7 @@ def contour(scans,cls,*args,**kwargs):
         try:
             a.runIterations(1,fract=0)
         except np.linalg.linalg.LinAlgError:
-            print 'Failed for the following parameters', scans
+            print('Failed for the following parameters', scans)
         #res = np.mean(a.formfact-ff0)
         res = np.mean(np.absolute(a.landau_phasor)-np.absolute(lp0))*np.exp(1j*np.mean(np.angle(a.landau_phasor)-np.angle(lp0)))
         return res
@@ -822,7 +822,7 @@ def contour(scans,cls,*args,**kwargs):
         kwargs.update({'followind':followind})
         infill[i] = contour(scn_tmp,cls,*args,**kwargs)
         if n==followind:
-            print 'Completed %d of %d for the tracked scanned parameter' % (i+1,tot_num)        
+            print('Completed %d of %d for the tracked scanned parameter' % (i+1,tot_num))
     res = infill[:]
     for e in range(n):
         res = np.array([res],complex)

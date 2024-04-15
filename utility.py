@@ -66,7 +66,7 @@ def load3D(filename,turns=None,return_comments=False,**kwargs):
                 turns+=1
         file3d.close()
 
-    print filename, turns
+    print(filename, turns)
     try: data = data.reshape(turns,-1,data.shape[-1])
     except ValueError: data = data.reshape(turns+1,-1,data.shape[-1])
 
@@ -236,7 +236,7 @@ class ResultsDir:
 
     def initialise(self,clsname,*args,**kwargs):
         for d in self.dirs:
-            print d
+            print(d)
             self.results.append(clsname(self.dirname+d,*args,**kwargs))
 
     def callMethod(self,method,*args,**kwargs):
@@ -246,7 +246,7 @@ class ResultsDir:
         """
         results = []
         for r,d in zip(self.results,self.dirs):
-            print 'ResultsDir> calling for ', d
+            print('ResultsDir> calling for ', d)
             results.append(method(r,*args,**kwargs))
         return results
 
@@ -578,8 +578,8 @@ def valueGrid(x,y,z):
             arr[cx,cy-patchlen/2:] = zb
             last_cy = 1*cy
         end_ind = min(next_cy+(next_cy-cy)/2,arr.shape[1])
-        print next_cy, cy
-        print next_cy+(next_cy-cy)/2, arr.shape[1], end_ind
+        print(next_cy, cy)
+        print(next_cy+(next_cy-cy)/2, arr.shape[1], end_ind)
         arr[cx,(next_cy+cy)/2:end_ind] = za[-1]
         arr[cx,end_ind+1:] = np.nan
         last_cy = 0

@@ -162,7 +162,7 @@ def getOmegasBlen(inst,hcflat,interp=False):
                 detind = np.nanargmin(np.absolute(f-h))
             else:
                 detind = detind0+(h-f[detind0])/(f[detind1]-f[detind0])
-                print detind0, detind1, detind
+                print(detind0, detind1, detind)
         else:
             detind = np.nanargmin(np.absolute(f-h))
         omegas[i] = inst.sring.espread*inst.sring.alphac/inst.blenbar[i,int(detind)]
@@ -217,7 +217,7 @@ def getLindbergThreshold2(inst,hcflat,startind=0,controlplot=False,saveOutput=No
         #bl[detinds<7] = inst.blenbar[detinds<7,detinds]
         #omegas[detinds<7] = inst.sring.espread*inst.sring.alphac/bl
         #detinds[detinds<7] = 7
-        print detinds
+        print(detinds)
         omegasf = sd.alphac*sd.espread/flatPotentialBunchLength(inst.vrf[0])
         if interp:
             floordetind = np.array(np.floor(detinds),int)
@@ -606,7 +606,7 @@ def loadCOSMOSDataAsInst(basedir):
     maxlen = 0    
     for d in dirs:
         metadata = np.loadtxt(basedir+d+'/README')
-        print 'Parked detuning=%.1f' % metadata[0,0]
+        print('Parked detuning=%.1f' % metadata[0,0])
         tmpvrfs = metadata[1:,0]        
         tmpcurrs = metadata[1:,1]
         #if isinstance(tmpcurrs,float):

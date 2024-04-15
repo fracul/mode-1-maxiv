@@ -206,7 +206,7 @@ def boschInstability(sring,rfreq,rs,qfactor,tinst,mode=1,singlep=False,consisten
     else:
         omegar = np.sqrt(sring.alphac*sring.frf*2*np.pi*revfreq/sring.energy*(ffact[0]*sring.vrf*np.sin(vphi1)+
                                                                               nharm[1]*ffact[1]*v2*np.sin(vphi2)))
-    print 'Robinson tune:', omegar/2/np.pi/sring.frf*sring.nbunch
+    print('Robinson tune:', omegar/2/np.pi/sring.frf*sring.nbunch)
 
     omegag = 2*np.pi*sring.frf
     commconst = sring.alphac/sring.energy*revfreq

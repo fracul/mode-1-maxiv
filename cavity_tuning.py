@@ -86,7 +86,7 @@ def semiFlat(rs,qfact,nharm,s,formfact=1,k_out=False):
 
     k = np.sqrt((-b+np.sqrt(b**2-4*a*c))/2./a)
     k_low = np.sqrt((-b-np.sqrt(b**2-4*a*c))/2./a)
-    print k, k_low
+    print(k, k_low)
     psi = np.arccos(k*s.vrf/(2.*s.current*formfact*rs))
     detune = np.tan(psi)/2./qfact*nharm*s.frf
 
@@ -108,10 +108,10 @@ def fromTwoCavities(cavnames,field,phase,current,blen=200e-12,maxdetune=500e3):
         maxpsis[i] = np.pi-np.arctan(2*cvp['Q']*maxdetune/cvp['fres'])
 
     psis = getPsis_scan(amps,field,phase,maxpsis)
-    print psis
+    print(psis)
     detunes = -np.tan(psis)*np.array([cavparams[c]['cavity']['fres']/2./cavparams[c]['cavity']['Q'] for c in cavnames])
 
-    print 'Fields =', np.absolute(amp*np.cos(psis))
+    print('Fields =', np.absolute(amp*np.cos(psis)))
 
     return detunes
 

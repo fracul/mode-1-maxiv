@@ -130,7 +130,7 @@ class VlasovSolve(cbm_solver.CbmTdmSolve):
             n = order
             norm = norm/self.tinst.sring.frf*self.tinst.sring.nbunch
             omegas = omegas/self.tinst.sring.frf*self.tinst.sring.nbunch/2./np.pi
-            print norm
+            print(norm)
             universal = (self.tinst.sring.alphac*np.real(area)/omegas[0]/np.pi/4.)**n/self.tinst.sring.espread**2*np.outer(1/norm,np.exp(-hamvals/self.tinst.sring.espread**2))+1j*0
             if omegasapprox:
                 integral = np.trapz(universal[0]/2/n/(dispersion-n*omegas[0]),x=hamvals)

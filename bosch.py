@@ -75,7 +75,7 @@ class BoschInstability:
                                                                                             self.nharm[1]*self.ffact[1]*self.v2*np.sin(self.vphi2)))
             self.omegas = self.omegar
             
-        print 'Robinson tune:', self.omegar/2/np.pi/sring.frf*sring.nbunch
+        print('Robinson tune:', self.omegar/2/np.pi/sring.frf*sring.nbunch)
 
         self.vector = vector
         self.commconst = self.sring.alphac/self.sring.energy*self.revfreq        
@@ -255,7 +255,7 @@ def flatDistribution(sring,nharm,time,nphi,kflat,phis):
     qso = np.sqrt(sring.nbunch*sring.alphac*sring.vrf*np.sqrt(1-(sring.eloss/sring.vrf)**2)/2./np.pi/sring.energy)
     sigmatau = 2*np.sqrt(np.pi)/gammakvart*(3./(nharm*nharm-1))**(1/4.)*np.sqrt(sring.nbunch*sring.alphac*sring.espread/qso)/2./np.pi/sring.frf
     dist = 8**0.25/gammakvart/gammakvart/sigmatau*np.sqrt(2*np.pi)*np.exp(-2*np.pi*np.pi*(time/sigmatau/gammakvart)**4)
-    print 'Bunch length with and without lengthening (ps):', sring.espread*sring.alphac*sring.nbunch/2./np.pi/sring.frf/qso, sigmatau
+    print('Bunch length with and without lengthening (ps):', sring.espread*sring.alphac*sring.nbunch/2./np.pi/sring.frf/qso, sigmatau)
 
     return time, vrf_tot, vlc, dist
 

@@ -284,7 +284,7 @@ class CbmTdmSolve:
             out[i]['roots'] = -g
             out[i]['diffomega'] = realpart
             if (realpart.imag!=0).all():
-                print 'Warning: eigenfrequency %d has no completely real frequency shift' % i
+                print('Warning: eigenfrequency %d has no completely real frequency shift' % i)
 
         out = np.sort(out,order=['realimag','roots'],axis=1)
         self.ef_qqsolve = (out['diffomega']-1j*out['roots']).T
@@ -336,11 +336,11 @@ def thresholdRs(cbinst,niter=1,fit_order=2,refreshtinst=False,quadrupole=False):
         #tstfit = np.polyfit(rsreduc[-(fit_order+1):],np.array(gr[-(fit_order+1):])-damprate,fit_order)
         tstroots = np.roots(tstfit)
         if (tstroots.imag!=0).all():
-            print 'No real roots found, ending after %d iterations' % n
+            print('No real roots found, ending after %d iterations' % n)
             break
         tstroots = tstroots[tstroots.imag==0]
         if (tstroots<0).all():
-            print 'No positive roots found, ending after %d iterations' % n
+            print('No positive roots found, ending after %d iterations' % n)
             break
         tstroots = tstroots[tstroots>0]
         cbinst.rs = np.amin(tstroots)*rs0
@@ -349,7 +349,7 @@ def thresholdRs(cbinst,niter=1,fit_order=2,refreshtinst=False,quadrupole=False):
         gr.append(getgrate())
 
     tol = rsreduc[-1]-rsreduc[-2]
-    print 'Tolerance reached: %e' % tol
+    print('Tolerance reached: %e' % tol)
 
     #rsarray = np.array(zip(rsreduc,gr,np.absolute(gr)),dtype=[('rsreduc',float),('gr',float),('absgr',float)])
     #rsarray = np.sort(rsarray,order=['absgr'])
@@ -442,7 +442,7 @@ def frequencyScan(freqs,*args,**kwargs):
             try:
                 t.runIterations(20,blenskip=5)
             except np.linalg.linalg.LinAlgError:
-                print 'Static fail'
+                print('Static fail')
                 continue
             t.runIterations(80,blenskip=5)
             if fullform:
@@ -476,7 +476,7 @@ def frequencyScan(freqs,*args,**kwargs):
             try:
                 g.solvEigen()
             except np.linalg.linalg.LinAlgError:
-                print 'Dynamic fail (threshold Rs search)'
+                print('Dynamic fail (threshold Rs search)')
                 continue
             if solveq:
                 g.solveQuadraticEvals()
@@ -498,7 +498,7 @@ def frequencyScan(freqs,*args,**kwargs):
             try:
                 g.solvEigen()
             except np.linalg.linalg.LinAlgError:
-                print 'Dynamic fail'
+                print('Dynamic fail')
                 continue
             if modescan:
                 g.laplaceTransform()

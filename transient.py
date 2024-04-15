@@ -669,7 +669,7 @@ def getFsVariableTransform(tinst,delta,index=0,k=None,n=None,phih=None,area=Fals
             phis = np.arcsin(n*n*elossnorm/(n*n-1))
             if k==None: k = np.sqrt(1./n**2-1./(n*n-1)*elossnorm**2)
             if phih==None: phih = -np.pi-np.arctan(-n*elossnorm/np.sqrt((n*n-1)**2-(n*n*elossnorm)**2))
-            print 'Landau cavity voltage: %.1f' % (k*sring.vrf)
+            print('Landau cavity voltage: %.1f' % (k*sring.vrf))
         else:
             k = 0
             phih = 0
@@ -697,7 +697,7 @@ def getFsVariableTransform(tinst,delta,index=0,k=None,n=None,phih=None,area=Fals
             k = np.absolute(tinst.landau_phasor[index,1])/vrf
             phih = -np.pi/2+np.angle(tinst.landau_phasor[index,1])
 
-        print 'RF bucket number = %d' % index
+        print('RF bucket number = %d' % index)
 
     phi = 2*np.pi*sring.frf*time
     
@@ -732,8 +732,8 @@ def getFsVariableTransform(tinst,delta,index=0,k=None,n=None,phih=None,area=Fals
 
     fs = 1/(2./sring.alphac*(np.trapz(invfidot1,x=phip1,axis=0)-np.trapz(invfidot2,x=phip2,axis=0)))
 
-    print 'vrf=%.3e, phi_s=%.5f' % (vrf,phis)    
-    print 'n=%d, k=%.5f, n*phi_h=%.5f' % (n,k,phih)
+    print('vrf=%.3e, phi_s=%.5f' % (vrf,phis))
+    print('n=%d, k=%.5f, n*phi_h=%.5f' % (n,k,phih))
 
     #Tracer()()
     if area:
@@ -794,7 +794,7 @@ def getFsGeneral(tinst,delta,index=0,area=False):
         nphihs.append(phih)
         ns.append(tinst.nharm[a.index])
 
-    print 'RF bucket number = %d' % index
+    print('RF bucket number = %d' % index)
 
     phi = 2*np.pi*sring.frf*time
 
@@ -835,8 +835,8 @@ def getFsGeneral(tinst,delta,index=0,area=False):
 
     fs = 1/(2./sring.alphac*(np.trapz(invfidot1,x=phip1,axis=0)-np.trapz(invfidot2,x=phip2,axis=0)))
 
-    print 'vrf=%.3e, phi_s=%.5f' % (vrf,phis)    
-    print 'n=%d, k=%.5f, n*phi_h=%.5f' % (n,k,phih)
+    print('vrf=%.3e, phi_s=%.5f' % (vrf,phis))
+    print('n=%d, k=%.5f, n*phi_h=%.5f' % (n,k,phih))
 
     #Tracer()()
     if area:
@@ -942,7 +942,7 @@ def calcCField(tinst,current,rs,rfreq,qfactor):
     formfact = np.trapz(np.exp(-1j*omegar*tinst.time)*tinst.dist,axis=0,x=tinst.time[:,0])/np.absolute(np.trapz(tinst.dist,axis=0,x=tinst.time[:,0]))
     amp = current*2/tinst.revfreq*tinst.bcurr*rs*alpha*formfact
 
-    print amp[0], np.mean(formfact)
+    print(amp[0], np.mean(formfact))
 
     deltaphi = np.outer(1j*omegar+alpha,-np.arange(tinst.sring.nbunch))/tinst.sring.frf    
     dwake_sum = (-1j*omegar-alpha)/(1-np.exp(-(1j*omegar+alpha)/tinst.revfreq))

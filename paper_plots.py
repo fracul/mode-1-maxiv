@@ -107,7 +107,7 @@ def lindbergPlot(inst,lbergres=[],taue=0.025194,wsfromblen=False,detind=4,starti
     omegasf = inst.sring.espread*inst.sring.alphac/vrfCurrScan.flatPotentialBunchLength(inst.vrf[0])
     for i,(t,r,d) in enumerate(zip(inst.blenbar[startind:],mode1iter,detinds)):
         omegas = inst.sring.espread*inst.sring.alphac/t[d]
-        print d, omegas        
+        print(d, omegas)
         if wsfromblen: omegasf = 1*omegas
         if i==0 and not lbergres: tlraddamp = lindberg.lindbergIntegral(1/taue/omegasf)
         ax.plot(omegasf*(tlzerodamp.real+0*1)/2/np.pi,omegasf*tlraddamp.imag,'-',c=cmap(inst.current[i+startind]/np.amax(inst.current)))
