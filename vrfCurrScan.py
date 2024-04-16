@@ -158,7 +158,7 @@ def getOmegasBlen(inst,hcflat,interp=False):
             try:
                 detind0 = np.where(f-h<0)[0][np.nanargmin(np.absolute((f-h)[f-h<0]))]
                 detind1 = np.where(f-h>0)[0][np.nanargmin(np.absolute((f-h)[f-h>0]))]
-            except ValueError, IndexError:
+            except(ValueError, IndexError):
                 detind = np.nanargmin(np.absolute(f-h))
             else:
                 detind = detind0+(h-f[detind0])/(f[detind1]-f[detind0])

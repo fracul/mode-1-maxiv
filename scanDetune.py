@@ -376,7 +376,7 @@ class BoschAnalysis:
                     if np.any(cbm.eigenmodes_lplcenum==175):
                         self.ruthd1[i,j,1] = cbm.bigOmega[cbm.eigenmodes_lplcenum==175][0]
                         #self.ruthd1[i,j] = cbm.bigOmega[np.where((cbm.eigenmodes_lplcenum==1) | (cbm.eigenmodes_lplcenum==175))[0][:2]]
-                except np.linalg.LinAlgError:
+                except(np.linalg.LinAlgError):
                     pass
 
                 try:
@@ -414,7 +414,7 @@ class BoschAnalysis:
                     vbm.laplaceTransform()
                     self.ruthq_v[i,j] = vbm.bigOmega[np.argmax(np.absolute(vbm.eigenmodes_laplace[0]))]
                     self.ruthq1_v[i,j] = vbm.bigOmega[[np.argmin(np.absolute(vbm.eigenmodes_lplcenum-1)),np.argmin(np.absolute(vbm.eigenmodes_lplcenum-175))]]   
-                except np.linalg.LinAlgError, ValueError:
+                except(np.linalg.LinAlgError, ValueError):
                     pass                
                 
                 self.venturini[i,j], self.venturinoff[i,j] = haissinski.venturiniInstability(revfreq,rfreq,rs,q,energy=self.sring.energy,alpha=self.sring.alphac,
@@ -615,13 +615,13 @@ def detuneScan(*args,**kwargs):
         t = transient.Transient(*k,**kwargs)
         try:
             t.runIterations(300,blenskip=5)
-        except np.linalg.linalg.LinAlgError:
+        except(np.linalg.linalg.LinAlgError):
             print('Error with detuning', d)
         r = transient.Transient(*k,**kwargs)
         r.time_off = kick*np.sin(np.arange(args[0].nbunch)*2*np.pi/args[0].nbunch)
         try:
             r.runIterations(300,blenskip=5)
-        except np.linalg.linalg.LinAlgError:
+        except(np.linalg.linalg.LinAlgError):
             print('Error with kick and detuning', d)
         if kwargs['blength']==False:
             t.bunchProfile()
@@ -665,7 +665,7 @@ def formFactContour(*args,**kwargs):
             t.formfact = np.ones((t.sring.nbunch,len(args[2])))*ff0
             try:
                 t.runIterations(1,fract=0)
-            except np.linalg.linalg.LinAlgError:
+            except(np.linalg.linalg.LinAlgError):
                 print('Failed for amplitude %.1f and phase %.1f' % (f,p))
             res[i,j] = np.mean(t.formfact[:,hcind])-ff0
 
@@ -776,7 +776,7 @@ def fieldModContour(*args,**kwargs):
                 t.formfact = 1*ff0 
                 try:
                     t.runIterations(1,fract=0)
-                except np.linalg.linalg.LinAlgError:
+                except(np.linalg.linalg.LinAlgError):
                     print('Failed for amplitude %.1f and phase %.1f' % (f,p))
                 res[i,j,k] = np.mean(t.formfact)-np.mean(ff0)
                 #res[i,j,k] = np.mean(t.formfact-ff0)
@@ -804,7 +804,7 @@ def contour(scans,cls,*args,**kwargs):
         a.__class__ = transient.Transient
         try:
             a.runIterations(1,fract=0)
-        except np.linalg.linalg.LinAlgError:
+        except(np.linalg.linalg.LinAlgError):
             print('Failed for the following parameters', scans)
         #res = np.mean(a.formfact-ff0)
         res = np.mean(np.absolute(a.landau_phasor)-np.absolute(lp0))*np.exp(1j*np.mean(np.angle(a.landau_phasor)-np.angle(lp0)))
@@ -868,7 +868,7 @@ def brentModOpti(*args,**kwargs):
         t.formfact = 1*ff0
         try:
             t.runIterations(1,fract=0)
-        except np.linalg.LinAlgError:
+        except(np.linalg.LinAlgError):
             pdiff = np.exp(1j*np.pi/2.)
             pen0 = 1.0
             #raise

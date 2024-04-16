@@ -441,7 +441,7 @@ def frequencyScan(freqs,*args,**kwargs):
             #t.time_off = np.zeros(len(t.time_off))
             try:
                 t.runIterations(20,blenskip=5)
-            except np.linalg.linalg.LinAlgError:
+            except(np.linalg.linalg.LinAlgError):
                 print('Static fail')
                 continue
             t.runIterations(80,blenskip=5)
@@ -475,7 +475,7 @@ def frequencyScan(freqs,*args,**kwargs):
                 
             try:
                 g.solvEigen()
-            except np.linalg.linalg.LinAlgError:
+            except(np.linalg.linalg.LinAlgError):
                 print('Dynamic fail (threshold Rs search)')
                 continue
             if solveq:
@@ -497,7 +497,7 @@ def frequencyScan(freqs,*args,**kwargs):
                 
             try:
                 g.solvEigen()
-            except np.linalg.linalg.LinAlgError:
+            except(np.linalg.linalg.LinAlgError):
                 print('Dynamic fail')
                 continue
             if modescan:

@@ -68,7 +68,7 @@ def load3D(filename,turns=None,return_comments=False,**kwargs):
 
     print(filename, turns)
     try: data = data.reshape(turns,-1,data.shape[-1])
-    except ValueError: data = data.reshape(turns+1,-1,data.shape[-1])
+    except(ValueError): data = data.reshape(turns+1,-1,data.shape[-1])
 
     if return_comments: return data.T, comms
     return data.T
@@ -187,7 +187,7 @@ class StorageRing(object):
             if e.startswith('#'): continue
             e = e.split('=')
             try: indict.update({e[0].strip():eval(e[1])})
-            except NameError: indict.update({e[0].strip():e[1].strip()})
+            except(NameError): indict.update({e[0].strip():e[1].strip()})
         self.__dict__.update(indict)
         f.close()
 
@@ -415,7 +415,7 @@ def loadTaurusFile(fname,archiver=False):
         while True:
             try:
                 ret = time.mktime(time.strptime(x,'%Y-%m-%d_%H:%M:%S'))
-            except ValueError as v:
+            except(ValueError) as v:
                 if len(v.args) > 0 and v.args[0].startswith('unconverted data remains: '):
                     uncnv += x[-1]
                     x = x[:-1]
