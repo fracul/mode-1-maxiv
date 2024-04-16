@@ -20,7 +20,7 @@ class Transient:
         *qfact*   - list or array of quality factors of each resonator
 
         Optional keyword arguments:
-        *fill*       - [default 0.75] fill of the machine: can either be a number less than or equal to 1 being the fraction of machine RF buckets that are full
+        *fill*       - [default 0.75] fill of the machine: can either be a number less than or equal to 1 being the fraction of machine RF buckets that are full pr a 1D array of length equal to the machine harmonic number with the relative charge in each bucket.
         *blength*    - [default False] account for the finite lengths of the electron bunches using form factors
         *feedback*   - [default False] include feedback for the main RF (useful to account for beam loading of the main cavities, which is assumed to be the first resonator)
         *complex256* - [default False] extend data type to more bits (for cases where float precision is not enough)
